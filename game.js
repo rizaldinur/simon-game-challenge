@@ -1,1 +1,1 @@
-alert("Loaded");
+var randomNumber = Math.floor(Math.random() * 4);
