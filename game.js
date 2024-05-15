@@ -27,7 +27,7 @@ $("#green").on("click", function () {
   userClickedPattern.push(userChosenColour);
 
   playSound(userChosenColour);
-
+  animatePress(userChosenColour);
   console.log(userChosenColour);
 });
 
@@ -36,7 +36,7 @@ $("#yellow").on("click", function () {
   userClickedPattern.push(userChosenColour);
 
   playSound(userChosenColour);
-
+  animatePress(userChosenColour);
   console.log(userChosenColour);
 });
 
@@ -45,7 +45,7 @@ $("#red").on("click", function () {
   userClickedPattern.push(userChosenColour);
 
   playSound(userChosenColour);
-
+  animatePress(userChosenColour);
   console.log(userChosenColour);
 });
 
@@ -54,11 +54,19 @@ $("#blue").on("click", function () {
   userClickedPattern.push(userChosenColour);
 
   playSound(userChosenColour);
-
+  animatePress(userChosenColour);
   console.log(userChosenColour);
 });
 
 function playSound(name) {
   var sound = new Audio("./sounds/" + name + ".mp3");
   sound.play();
+}
+
+function animatePress(currentColour) {
+  $("#" + currentColour).addClass("pressed");
+
+  setTimeout(function () {
+    $("#" + currentColour).removeClass("pressed");
+  }, 100);
 }
