@@ -2,82 +2,76 @@ var gamePattern = [];
 var buttonColours = ["red", "blue", "green", "yellow"];
 var userClickedPattern = [];
 var level = 0;
+var started = false;
 
 //at Start game
 //Press keyboard only once to start game
 $(document).ready(function () {
-  if (level === 0) {
-    $(this).on("keydown", function (e) {
+  $(document).on("keydown", function () {
+    if (!started) {
+      $("#level-title").text("Level " + level);
       nextSequence();
-    });
-  }
+      started = true;
+    }
+  });
 });
 
 //Step 4
 //1 create click event handler
-var answer = false;
 var clickCount = 0;
 $(".btn").on("click", function () {
   var userChosenColour = $(this).attr("id");
   userClickedPattern.push(userChosenColour);
-  //itung setiap click
-  clickCount++;
 
   playSound(userChosenColour);
   animatePress(userChosenColour);
 
-  //cek jawaban berdasarkan tombol warna yg diklik
-  //jika klik terakhir benar, lanjut sampai klik = length gamepattern
-  answer = checkAnswer(clickCount);
-  if (answer === true) {
-    //tunggu sampai klik = panjang/jumlah gamepattern
-    if (clickCount === gamePattern.length) {
-      setTimeout(() => {
-        //resset click pattern dan click count
-        userClickedPattern.length = 0;
-        clickCount = 0;
+  checkAnswer(userClickedPattern.length - 1);
+});
 
-        //next
+//cek jawaban berdasarkan tombol warna yg diklik
+//jika klik terakhir benar, lanjutkan sampai klik = panjang gamepattern
+function checkAnswer(currentLevel) {
+  if (gamePattern[currentLevel] === userClickedPattern[currentLevel]) {
+    //tunggu sampai klik = panjang/jumlah gamepattern
+    if (userClickedPattern.length === gamePattern.length) {
+      setTimeout(() => {
+        //resset click pattern
+        userClickedPattern = [];
+        //next level
         nextSequence();
       }, 1000);
     }
     return;
   }
-  //jika salah, gameover
+  //jika ada salah, langsung gameover
   else {
     gameOver();
+    startOver();
   }
-});
+}
 
+//buat gameOver fungsi
 function gameOver() {
-  //reset level, reset gamepattern, clickpattern, clickcount
-  level = 0;
-  userClickedPattern.length = 0;
-  gamePattern.length = 0;
-  clickCount = 0;
-
   //header ganti
-  $("h1").text("Game Over, Press Any Key to Restart");
+  $("#level-title").text("Game Over, Press Any Key to Restart");
 
+  //play sound game over
+  playSound("wrong");
   //animasikan background flashing merah
   $("body").addClass("game-over");
 
   setTimeout(function () {
     $("body").removeClass("game-over");
   }, 100);
-
-  //play sound game over
-  playSound("wrong");
 }
 
-//step 8 check answer on every last color that user click button
-function checkAnswer(currentLevel) {
-  if (gamePattern[currentLevel - 1] === userClickedPattern[currentLevel - 1]) {
-    console.log("correct");
-    return true;
-  }
-  console.log("wrong");
-  return false;
+function startOver() {
+  //reset level, reset gamepattern, clickpattern, clickcount
+  level = 0;
+  userClickedPattern = [];
+  gamePattern = [];
+  started = false;
 }
 
 function nextSequence() {
@@ -98,7 +92,7 @@ function nextSequence() {
 
   //change level every new sequence
   level++;
-  $("h1").text("Level " + level);
+  $("#level-title").text("Level " + level);
 }
 
 function playSound(name) {
